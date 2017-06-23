@@ -2,8 +2,10 @@ import requests
 from random import randint
 
 class Solver:
-    def demo(self, budget, visited_countries):
-        flights = self.get_flights('PRG','01/09/2017', '01/10/2017')
+    def demo(self, city_name, date_from, date_to, budget, visited_countries):
+        airport_code = self.get_airport_code(city_name)
+
+        flights = self.get_flights(airport_code, date_from, date_to)
 
         print(len(flights))
 
@@ -37,7 +39,10 @@ class Solver:
     def get_flight_winner_id(self, max):
         return randint(0, max - 1)
 
+    def get_airport_code(self, city_name):
+        r = requests.get('https://locations.skypicker.com/?term={}'.format(city_name))
+        return r.json()['locations'][0]['code']
 
 
-t = Solver().demo(40, ['Czech Republic', 'Slovakia'])
+t = Solver().demo('Pargue', '01/09/2017', '01/10/2017', 40, ['Czech Republic', 'Slovakia'])
 print(t['mapIdto'])
