@@ -1,9 +1,12 @@
 import requests
 from random import randint
+from datetime import datetime, timedelta
 
 class Solver:
-    def demo(self, city_name, date_from, date_to, budget, visited_countries):
+    def demo(self, city_name, date_from, days, budget, visited_countries):
         airport_code = self.get_airport_code(city_name)
+
+        date_to = date_from + timedelta(days=days)
 
         flights = self.get_flights(airport_code, date_from, date_to)
 
@@ -24,7 +27,7 @@ class Solver:
 
     def get_flights(self, flyFrom, dateFrom, dateTo):
         r = requests.get(
-            'https://api.skypicker.com/flights?flyFrom={}&dateFrom={}&dateTo={}&partner=picky'.format(flyFrom, dateFrom, dateTo))
+            'https://api.skypicker.com/flights?flyFrom={}&dateFrom={}&dateTo={}&partner=picky'.format(flyFrom, dateFrom.strftime('%d/%m/%Y'), dateTo.strftime('%d/%m/%Y')))
         flights = r.json()['data']
         return flights
 
@@ -44,5 +47,5 @@ class Solver:
         return r.json()['locations'][0]['code']
 
 
-t = Solver().demo('Pargue', '01/09/2017', '01/10/2017', 40, ['Czech Republic', 'Slovakia'])
+t = Solver().demo('Pargue', datetime.strptime('01/09/2017', '%d/%m/%Y'), 31, 40, ['Czech Republic', 'Slovakia'])
 print(t['mapIdto'])
